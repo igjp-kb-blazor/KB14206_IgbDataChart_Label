@@ -1,0 +1,81 @@
+﻿<div style="max-width: 700px; margin: auto; padding: 24px; display: flex; flex-direction: column; gap: 24px;">
+    <IgbSwitch @bind-Checked="IsChecked">Y 軸のラベルを切り替える</IgbSwitch>
+    <IgbDataChart Width="100%"
+                  Height="300px"
+                  ComputedPlotAreaMarginMode="ComputedPlotAreaMarginMode.Series">
+        <IgbCategoryXAxis Name="xAxis"
+                          DataSource="_data"
+                          Label="@nameof(DataItem.Index)"
+                          MajorStroke="1">
+        </IgbCategoryXAxis>
+
+        <IgbNumericYAxis Title="Sample (百万)"
+                         Name="showYAxis"
+                         MaximumValue="@showMaximumValue"
+                         MinimumValue="@showMinimumValue"
+                         TitleTextColor="red"
+                         LabelTextColor="red"
+                         MajorStroke="@(IsChecked ? "" : "transparent")"
+                         TitleVisibility="@(IsChecked ? Visibility.Visible : Visibility.Collapsed)"
+                         LabelVisibility="@(IsChecked ? Visibility.Visible : Visibility.Collapsed)">
+        </IgbNumericYAxis>
+
+        <IgbNumericYAxis Title="Sample"
+                         Name="yAxis"
+                         MaximumValue="@maximumValue"
+                         MinimumValue="@minimumValue"
+                         TitleTextColor="blue"
+                         LabelTextColor="blue"
+                         MajorStroke="@(IsChecked ? "transparent" : "")"
+                         TitleVisibility="@(IsChecked ? Visibility.Collapsed : Visibility.Visible)"
+                         LabelVisibility="@(IsChecked ? Visibility.Collapsed : Visibility.Visible)">
+        </IgbNumericYAxis>
+
+        <IgbLineSeries Title="Sample Data"
+                       DataSource="_data"
+                       XAxisName="xAxis"
+                       YAxisName="yAxis"
+                       ValueMemberPath="@nameof(DataItem.Value)">
+        </IgbLineSeries>
+    </IgbDataChart>
+</div>
+
+@code {
+    private bool IsChecked = false;
+    private double maximumValue = 16000000;
+    private double minimumValue = 10000000;
+    private double showMaximumValue;
+    private double showMinimumValue;
+
+    public class DataItem
+    {
+        public int Index { get; set; }
+        public double? Value { get; set; }
+    }
+
+    private List<DataItem> _data = new()
+    {
+        new(){ Index = 0, Value = 12000000 },
+        new(){ Index = 1, Value = 14000000 },
+        new(){ Index = 2, Value = 11000000 },
+        new(){ Index = 3, Value = 13000000 },
+        new(){ Index = 4, Value = 15000000 },
+        new(){ Index = 5, Value = 12000000 },
+        new(){ Index = 6, Value = 14000000 },
+    };
+
+    protected override void OnInitialized()
+    {
+        showMaximumValue = maximumValue / 1000000;
+        showMinimumValue = minimumValue / 1000000;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+
+        if (firstRender)
+        {
+            StateHasChanged();
+        }
+    }
+}
